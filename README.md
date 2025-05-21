@@ -20,16 +20,16 @@ Parsed Email Example:
     "attachments": [
         {
             "file_name": "Shared2.kdbx",
-            "file_size": "12859",
+            "file_size": 12859,
             "hashs": {
                 "md5": "77d4d6453582722ca70fc23f7e311d2e",
                 "sha1": "86d912b082f82bac5aee110b44f2e6ab53f5cbdf",
-                "sha256": "c60cd253626c02d74552d31bc913431ab1631b13015ce3b20f19912a89d54cf7"
+                "sha256": "c60cd253626c02d74552d31bc913431ab1631b13015ce3b20f19912a89d54cf7" # Obtained file hashs without downloading the actual file to disk.
             }
         },
         {
             "file_name": "Binance.lnk",
-            "file_size": "2100",
+            "file_size": 2100,
             "hashs": {
                 "md5": "d00ffc1987e222b6b23f021b9ce75c50",
                 "sha1": "3c837ed42d11e768e6128a35df692305990a976e",
@@ -38,7 +38,7 @@ Parsed Email Example:
         },
         {
             "file_name": "headers.json",
-            "file_size": "7026",
+            "file_size": 7026,
             "hashs": {
                 "md5": "e06b3f4b1497c9f09884e738bf073fca",
                 "sha1": "c0a0da8e8c9c90d750883eb4adad968a7ad5b653",
@@ -47,7 +47,7 @@ Parsed Email Example:
         },
         {
             "file_name": "slack.exe",
-            "file_size": "307696",
+            "file_size": 307696,
             "hashs": {
                 "md5": "5460128374e368df8363e05d1adff51c",
                 "sha1": "e761e5998e73cafeb0e7a35b09fd0e5cb3fbeb63",
