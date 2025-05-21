@@ -12,6 +12,7 @@ import ipaddress
 import validators
 import dns.resolver
 
+
 # MailDict = lambda:{
 #     "subject": "",
 #     "sender_email": "",
@@ -50,6 +51,7 @@ ipv4_or_ipv6_regex = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b|'
                                 r':(?:(?::[A-Fa-f0-9]{1,4}){1,7}|:)'
                                 r')\b'
                                 )
+# ipv4_or_ipv6_regex = re.compile(r'(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}')
 extract_client_ip_regex = re.compile(r'client-ip=(.*)?;')
 extract_domain_regex = re.compile(r'\b(?:[a-zA-Z0-9-]{1,63}\.)+(?:[a-zA-Z]{2,63})\b')
 
@@ -91,11 +93,9 @@ for email, value in email_file_mapping.items():
 
     try:
         cc_recipients = [x for x in sum(loaded_mail_json["cc"], []) if x != ""]
-        print(cc_recipients)
         value.recipients_emails = set(sent_to).union(set(cc_recipients))
     except KeyError:
         value.recipients_emails = set(sent_to)
-
 
     # Sender Email, Sender Name
     sender_data = sum(loaded_mail_json["from"], [])
@@ -103,41 +103,41 @@ for email, value in email_file_mapping.items():
 
     # Email Message ID
     value.message_id = loaded_mail_json["message-id"].removeprefix('<').removesuffix('>')
-    hops = sorted(loaded_mail_json["received"], key= lambda x: x["hop"])
-    print(hops)
-    print(json.dumps(loaded_mail_json, indent=4))
 
     # Extract Semder IP from SPF Validation
+    # Sort hops by hop number for efficient iteration.
+    hops = sorted(loaded_mail_json["received"], key=lambda x: x["hop"])
     try:
         value.sender_ip = extract_client_ip_regex.findall(loaded_mail_json['received-spf'])[0]
         for i in hops:
             if "from" in i and value.sender_ip in i["from"]:
                 reciever_ip = extract_client_ip_regex.findall(i["by"])
                 reciever_domain = extract_domain_regex.findall(i["by"])
-                if len(reciever_ip) > 0:
-                    value.recipient_ip = reciever_ip
-                    break
-                elif len(reciever_domain) > 0:
-                    value.recipient_ip = reciever_domain
+                value.recipient_ip = reciever_ip[0] if len(reciever_ip) != 0 else reciever_domain[0]
+                # if len(reciever_ip) > 0:
+                #     value.recipient_ip = reciever_ip[0]
+                #     break
+                # elif len(reciever_domain) > 0:
+                #     value.recipient_ip = reciever_domain
 
     except KeyError:
         for i in hops:
             if "from" in i:
-                reciever_ip = extract_client_ip_regex.findall(i["from"])
-
-                if len(reciever_ip) > 0:
-                    ip = ipaddress.ip_address(reciever_ip[0])
-                    if not ip.is_private:
-                        value.recipient_ip = reciever_ip[0]
+                sender_ip = ipv4_or_ipv6_regex.findall(i["from"])
+                if len(sender_ip) > 0:
+                    ip = ipaddress.ip_address(sender_ip[0])
+                    if ip.is_global is True:
+                        value.sender_ip = sender_ip[0]
                         reciever_ip = extract_client_ip_regex.findall(i["by"])
                         reciever_domain = extract_domain_regex.findall(i["by"])
-
+                        value.recipient_ip = reciever_ip[0] if len(reciever_ip) != 0 else reciever_domain[0]
                         break
 
-    # for d in recipient_domains:
-    #     if "from" in
 
 
+
+    print(value)
+    # print(json.dumps(loaded_mail_json, indent=4))
 
     # print(parsed.headers_json)
     # print(parsed.headers)
