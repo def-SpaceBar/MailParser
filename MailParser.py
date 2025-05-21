@@ -9,7 +9,8 @@ from pathlib import Path
 from collections import defaultdict
 from dataclasses import dataclass, field, asdict
 import ipaddress
-
+import base64
+import hashlib
 
 # MailDict = lambda:{
 #     "subject": "",
@@ -31,7 +32,7 @@ class ParseObject:
     sender_name: str = ""
     recipients_emails: set = field(default_factory=set)
     recipient_ip: str = ""
-    attachment_names: set = field(default_factory=set)
+    attachments: list[dict] = field(default_factory=list[dict])
     links: set = field(default_factory=set)
     domains: set = field(default_factory=set)
 
@@ -52,6 +53,7 @@ ipv4_or_ipv6_regex = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b|'
 # ipv4_or_ipv6_regex = re.compile(r'(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}')
 extract_client_ip_regex = re.compile(r'client-ip=(.*)?;')
 extract_domain_regex = re.compile(r'\b(?:[a-zA-Z0-9-]{1,63}\.)+(?:[a-zA-Z]{2,63})\b')
+file_size_regex = re.compile(r'size=(.*)?;')
 
 
 def type_handler(obj):
@@ -137,11 +139,32 @@ for email, value in email_file_mapping.items():
     links = set(tree.xpath("//a/@href"))
     links = [x for x in links if x != ""]
     value.links = links
+
+    # Extract linked-to domains
     link_domain_match = [extract_domain_regex.findall(link) for link in links]
     value.domains = set([x[0] for x in link_domain_match if len(x) > 0 or x != ""])
 
-    output = json.dumps(asdict(value), default=type_handler, indent=4)
-    print(output)
+    # Handle Attachments & Extract HASH with the file base64 without downloading it or creating it on disk.
+    if len(parsed.attachments) != 0:
+        for attachment in parsed.attachments:
+            match attachment["content_transfer_encoding"]:
+                case "base64":
+                    payload_as_bytes = base64.b64decode(attachment["payload"])
+                case _:
+                    pass
+            value.attachments.append({
+                "file_name": attachment["filename"],
+                "file_size": file_size_regex.findall(attachment["content-disposition"])[0],
+                "hashs": {
+                    "md5": hashlib.md5(payload_as_bytes).hexdigest(),
+                    "sha1": hashlib.sha1(payload_as_bytes).hexdigest(),
+                    "sha256": hashlib.sha256(payload_as_bytes).hexdigest()
+                }
+            })
+
+    #
+    # output = json.dumps(asdict(value), default=type_handler, indent=4)
+    # print(output)
 
 
 # print(email_file_mapping)
