@@ -12,9 +12,9 @@ Parsed Email Example:
     "message_id": "SJ2PR19MB7344DCAE7016782C6D7B4505F89EA@SJ2PR19MB7344.namprd19.prod.outlook.com",
     "sender_email": "spacebar.post@gmail.com",
     "sender_ip": "2603:1036:307:540d::5",
-    "sender_name": "bar space",
+    "sender_name": "bar revah",
     "recipients_emails": [
-        "hekoqq@gmail.com"
+        "test@example.com"
     ],
     "recipient_ip": "smtp.gmail.com" , # If IP not found, gets the domain
     "attachments": [
