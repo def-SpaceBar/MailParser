@@ -1,0 +1,55 @@
+{
+    "properties": {
+        "subject": {
+            "type": "text"
+        },
+        "message_id": {
+            "type": "keyword"
+        },
+        "sender_email": {
+            "type": "keyword"
+        },
+        "sender_ip": {
+            "type": "ip"
+        },
+        "sender_name": {
+            "type": "text"
+        },
+        "recipients_emails": {
+            "type": "keyword"
+        },
+        "recipient_ip": {
+            "type": "keyword"
+        },
+        "attachments": {
+            "type": "nested",
+            "properties": {
+                "file_name": {
+                    "type": "keyword"
+                },
+                "file_size": {
+                    "type": "long"
+                },
+                "hashs": {
+                    "properties": {
+                        "md5": {
+                            "type": "keyword"
+                        },
+                        "sha1": {
+                            "type": "keyword"
+                        },
+                        "sha256": {
+                            "type": "keyword"
+                        }
+                    }
+                }
+            }
+        },
+        "links": {
+            "type": "keyword"
+        },
+        "domains": {
+            "type": "keyword"
+        }
+    }
+}

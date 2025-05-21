@@ -1,6 +1,7 @@
 import json
+import time
 from datetime import datetime
-from elasticsearch import Elasticsearch
+from elasticsearch import Elasticsearch, helpers
 from lxml import html
 import regex as re
 import mailparser
@@ -14,18 +15,6 @@ import base64
 import hashlib
 
 env_vars = load_dotenv('mailparser_config.env')
-
-# Initiate an ElasticSearch Client session.
-
-try:
-    client = Elasticsearch(
-        os.environ['elastic_console_url'],
-        api_key=os.environ['elastic_api_key']
-    )
-except Exception:
-    print('error initiating Elastic Client, exits')
-    exit(1)
-
 
 # Parsed Email data object.
 @dataclass
@@ -41,7 +30,6 @@ class ParseObject:
     links: set = field(default_factory=set)
     domains: set = field(default_factory=set)
 
-
 # ParseObject = lambda:{
 #     "subject": "",
 #     "sender_email": "",
@@ -53,72 +41,6 @@ class ParseObject:
 #     "attachment_names": set(),
 #     "links": set()
 # }
-
-
-# ElasticSearch field mapping of the parsed object that we will inject to the email_index
-email_field_mapping = {
-    "mappings": {
-        "properties": {
-            "subject": {
-                "type": "text"
-            },
-            "message_id": {
-                "type": "keyword"
-            },
-            "sender_email": {
-                "type": "keyword"
-            },
-            "sender_ip": {
-                "type": "ip"
-            },
-            "sender_name": {
-                "type": "text"
-            },
-            "recipients_emails": {
-                "type": "keyword"
-            },
-            "recipient_ip": {
-                "type": "keyword"
-            },
-            "attachments": {
-                "type": "nested",
-                "properties": {
-                    "file_name": {
-                        "type": "keyword"
-                    },
-                    "file_size": {
-                        "type": "long"
-                    },
-                    "hashs": {
-                        "properties": {
-                            "md5": {
-                                "type": "keyword"
-                            },
-                            "sha1": {
-                                "type": "keyword"
-                            },
-                            "sha256": {
-                                "type": "keyword"
-                            }
-                        }
-                    }
-                }
-            },
-            "links": {
-                "type": "keyword"
-            },
-            "domains": {
-                "type": "keyword"
-            }
-        }
-    }
-}
-
-if os.environ["setup_mapping"].lower() == "true":
-    try:
-        set_mapping = client.indices.put_mapping(index=os.environ["email_index"], body=email_field_mapping)
-    except Exception as e:
-        print(f'an error occured while setting elasticsearch event mapping\n\nerror: {e}')
 
 email_file_mapping = defaultdict(ParseObject)
 extraction_array = []
@@ -249,4 +171,30 @@ for email, value in email_file_mapping.items():
     output = json.dumps(asdict(value), default=type_handler)
     extraction_array.append(output)
 
-print(extraction_array)
+# ElasticSearch field mapping of the parsed object that we will inject to the email_index
+
+
+with open('email_field_mapping.json', 'r') as mapping_json:
+    email_field_mapping = mapping_json.read()
+
+# Initiate an ElasticSearch Client session.
+try:
+    client = Elasticsearch(
+        os.environ['elastic_console_url'],
+        api_key=os.environ['elastic_api_key']
+    )
+except Exception:
+    print('error initiating Elastic Client, exits')
+    exit(1)
+
+# Setting up the event mapping over and over with the same values wont cause errors but should be turned off to reduce operations count
+if os.environ["setup_mapping"].lower() == "true":
+    try:
+        set_mapping = client.indices.put_mapping(index=os.environ["email_index"], body=email_field_mapping)
+    except Exception as e:
+        print(f'an error occured while setting elasticsearch event mapping\n\nerror: {e}')
+        exit(1)
+
+bulk_response = helpers.bulk(client, extraction_array, index=os.environ['email_index'])
+print(bulk_response)
+
