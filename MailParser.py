@@ -1,6 +1,6 @@
 import json
-import socket
 from datetime import datetime
+from lxml import html
 import regex as re
 import mailparser
 from dotenv import load_dotenv
@@ -9,8 +9,6 @@ from pathlib import Path
 from collections import defaultdict
 from dataclasses import dataclass, field, asdict
 import ipaddress
-import validators
-import dns.resolver
 
 
 # MailDict = lambda:{
@@ -133,23 +131,17 @@ for email, value in email_file_mapping.items():
                         value.recipient_ip = reciever_ip[0] if len(reciever_ip) != 0 else reciever_domain[0]
                         break
 
+    # Get links from email body by parsing the html
+    html_string = "".join(parsed.text_html)
+    tree = html.fromstring(html_string)
+    links = set(tree.xpath("//a/@href"))
+    links = [x for x in links if x != ""]
+    value.links = links
+    link_domain_match = [extract_domain_regex.findall(link) for link in links]
+    value.domains = set([x[0] for x in link_domain_match if len(x) > 0 or x != ""])
 
+    output = json.dumps(asdict(value), default=type_handler, indent=4)
+    print(output)
 
-
-    print(value)
-    # print(json.dumps(loaded_mail_json, indent=4))
-
-    # print(parsed.headers_json)
-    # print(parsed.headers)
-    # print(parsed.attachments)
-    # print(parsed.body)
-    # print(parsed.date)
-    # print(parsed.date_json)
-    # print(parsed.defects)
-    # print(parsed.defects_categories)
-    # print(parsed.headers_json)
-    # print(parsed.received_json)
-
-    # print(json.dumps(value, indent=4, default=type_handler))
 
 # print(email_file_mapping)
