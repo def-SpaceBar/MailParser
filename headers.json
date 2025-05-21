@@ -1,0 +1,88 @@
+{
+  "body": "test",
+  "content-type": "multipart/alternative; \n\tboundary=\"----=_Part_1739198_986993282.1747745837001\"",
+  "received-spf": "pass (google.com: domain of bounce-1816459-1883-2246767-spacebar.post=gmail.com@em-1816459.yoast.com designates 192.92.97.111 as permitted sender) client-ip=192.92.97.111;",
+  "subject": "Want to rank in AI search? Start here.",
+  "timezone": "+0.0",
+  "authentication-results": "mx.google.com;\n       dkim=pass header.i=@yoast.com header.s=acdkim1 header.b=U0xdROd5;\n       dkim=pass header.i=@acems5.com header.s=acdkim1 header.b=hsruv7Gu;\n       spf=pass (google.com: domain of bounce-1816459-1883-2246767-spacebar.post=gmail.com@em-1816459.yoast.com designates 192.92.97.111 as permitted sender) smtp.mailfrom=\"bounce-1816459-1883-2246767-spacebar.post=gmail.com@em-1816459.yoast.com\";\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=yoast.com",
+  "list-unsubscribe": "<https://mbyoastbv.activehosted.com/box.php?nl=6&c=1883&m=2106&s=2997c8623ecfc1445b19d92b01f0d9a2&funcml=unsub2&luha=1>,<mailto:unsubscribe-7d37cdf39032bde586801cec6d46b24c-1883-2997c8623ecfc1445b19d92b01f0d9a2@s2.csa2.acemsb4.com>",
+  "content-transfer-encoding": "7bit",
+  "feedback-id": "1816459:activecampaign",
+  "arc-message-signature": "i=1; a=rsa-sha256; c=relaxed/relaxed; d=google.com; s=arc-20240605;\n        h=feedback-id:list-unsubscribe:list-unsubscribe-post\n         :content-transfer-encoding:mime-version:subject:message-id:to:from\n         :date:cfbl-address:dkim-signature:dkim-signature;\n        bh=9x5ZbtoBtIgEDCBl4A8mizGvW4LS72/tz0ug/PMYjJY=;\n        fh=BcgiQimboalTUYun/rqaj82FtRuDJqg6Lwk1i+lwU30=;\n        b=LOOOVUiZY7mOnSnCVyGCpLuSwQbsfOsViKFpIDhr1zeWLDBfejOOoL2SkpNUcBPImx\n         nDbpgIoGjayJ6vXOgYXlF+wxm6psUFcguNT6pTOadXcUB7r0/d+wOztNVi1wjyqzfMpV\n         idQFWhRVU3lzS/QctCX1ky4K7R5rH8c7yy4F2bBDOOCsSMY8JhixQYofMIjHBE+2kfGg\n         kDeNaVZ7LUkIqTdzJkn8ws9m6WfejLOiSYzLqYfSnMyLTLkgzyS01HEH5wGkkEErZfyp\n         HWp5JOxayAV5lNVlpT8QtzR/EH7aJtEXdnvWxObDRonhUapnYhqkxn45F8NRpWkWmZIR\n         MtQQ==;\n        dara=google.com",
+  "delivered-to": [
+    [
+      "",
+      "spacebar.post@gmail.com"
+    ]
+  ],
+  "mime-version": "1.0",
+  "x-kumoref": "eyJfQF8iOiJcXF8vIiwicmVjaXBpZW50Ijoic3BhY2ViYXIucG9zdEBnbWFpbC5jb20ifQ==",
+  "x-dkim-options": "s=acdkim1",
+  "received": [
+    {
+      "from": "cell-5-7c479768c-6skv9 10.65.122.170",
+      "by": "acems1.com KumoMTA 10.13.181.134",
+      "with": "ESMTP",
+      "id": "f53abf38357911f08d5d0eedc181b9f9",
+      "for": "<spacebar.post@gmail.com>",
+      "date": "Tue, 20 May 2025 12:57:17 +0000",
+      "hop": 1,
+      "date_utc": "2025-05-20T12:57:17+00:00",
+      "delay": 0
+    },
+    {
+      "from": "s2.csa2.acemsb4.com s2.csa2.acemsb4.com. 192.92.97.111",
+      "by": "mx.google.com",
+      "with": "ESMTPS",
+      "id": "6a1803df08f44-6f8b0997eb8si109018906d6.183.2025.05.20.06.06.50",
+      "for": "<spacebar.post@gmail.com> version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256",
+      "date": "Tue, 20 May 2025 06:06:50 -0700 PDT",
+      "hop": 2,
+      "date_utc": "2025-05-20T13:06:50+00:00",
+      "delay": 573.0
+    },
+    {
+      "with": "SMTP",
+      "id": "h9csp398499imy",
+      "date": "Tue, 20 May 2025 06:06:50 -0700 PDT",
+      "hop": 3,
+      "date_utc": "2025-05-20T13:06:50+00:00",
+      "delay": 0.0
+    }
+  ],
+  "dkim-signature": [
+    "v=1; a=rsa-sha256; d=yoast.com; s=acdkim1; c=relaxed/relaxed;\n\tbh=9x5ZbtoBtIgEDCBl4A8mizGvW4LS72/tz0ug/PMYjJY=;\n\th=from:to:subject:date:mime-version:content-type:sender:cc:date:message-id;\n\tt=1747745837; x=1747832237;\n\tb=U0xdROd5h2xTFywvt0cJIPmq6iZJt5CEMj11TxszD7+2gwPz/Ycb3ZiJNtK+BcaLnwXt47h5G\n\tjp1k/uY8S68Aklh/7AvJWe9AqqT47qqSQVsrWSH//ojGFmsAigeo6DpeFinLerfFqf2KRmdls57\n\t2vuUHzkd2ocrZjTg/3UDeJiQprHmoUPf0iDePTtWwYWXWrAmjZO+y9Gu8TiyxlvJrer2h7cGevp\n\t/+ahgcZnBCYlXFSgaDV3xnBxRyWPK0Y4UlVJVyeWEcStot/nDlSDufID0uYFhgXaAmBWw6tnO++\n\to8c3dfdAYUAZXmItjboodrAqFYuKI7GnUM27dEPSZ73g==;",
+    "v=1; a=rsa-sha256; d=acems5.com; s=acdkim1; c=relaxed/relaxed;\n\tbh=9x5ZbtoBtIgEDCBl4A8mizGvW4LS72/tz0ug/PMYjJY=;\n\th=from:to:subject:date:mime-version:content-type:sender:cc:date:message-id;\n\tt=1747745837; x=1747832237;\n\tb=hsruv7Gud7xrNNiz3NnNL6JrEz+wmm77clX9qnkr0rv+k+FrJyHcWaLMxxYTlTtZQM1Y8UU5z\n\tB++1ZA+36SEzobAwbkY6zvgyg9TjcJ4OLRrIYyutwaCfSgN4kdVGSGeCa42OWIFGFdnMONvvUFC\n\tWdHC4qbbhyCqX10xNkex4FmbUQW+5EawR8gmZIw4GMERrO5j5M1SvUePbC1nvsE2v/e1tIo2zCz\n\t7O80rjmunn8uwR6+t2HRIvYIyhOiZTMBn9IZSylk3ACBeo7diUO69t3C9RU20IyKAJUF//Je4Zw\n\t/L1RnR5+ymMCufjvKA07lAsNJ7KxT6K7egnP272m6CwQ==;"
+  ],
+  "x-mid": "c3BhY2ViYXIucG9zdEBnbWFpbC5jb20gLCBjMTg4MyAsIG0yMTA2ICwgczg5MDkwMA==",
+  "x-250ok-cid": "1816459-1883",
+  "return-path": "<bounce-1816459-1883-2246767-spacebar.post=gmail.com@em-1816459.yoast.com>",
+  "x-mailer": "ActiveCampaign Mailer",
+  "cfbl-address": "fbl-report@acems1.com; report=arf",
+  "list-unsubscribe-post": "List-Unsubscribe=One-Click",
+  "arc-authentication-results": "i=1; mx.google.com;\n       dkim=pass header.i=@yoast.com header.s=acdkim1 header.b=U0xdROd5;\n       dkim=pass header.i=@acems5.com header.s=acdkim1 header.b=hsruv7Gu;\n       spf=pass (google.com: domain of bounce-1816459-1883-2246767-spacebar.post=gmail.com@em-1816459.yoast.com designates 192.92.97.111 as permitted sender) smtp.mailfrom=\"bounce-1816459-1883-2246767-spacebar.post=gmail.com@em-1816459.yoast.com\";\n       dmarc=pass (p=QUARANTINE sp=QUARANTINE dis=NONE) header.from=yoast.com",
+  "x-google-smtp-source": "AGHT+IERNfunHclx7RS44lUJvYfK7gaRCrwzqLFvhgeG++qA364Ivx7aarSnq+FqfRlratDn2ueu",
+  "arc-seal": "i=1; a=rsa-sha256; t=1747746410; cv=none;\n        d=google.com; s=arc-20240605;\n        b=CuXvzHNFIB9XJUCuJxLrEogmFoIubFoNgQYxRU3JpBupB4pIGldQs4uSzFvEUOwLzL\n         wsIbZA+nY3DmE/BwX/81/SrR9f5BDr9ujpNj1NLOF6J7XKL4nASrjvYl4b+fkquSfUNo\n         dqxMkr3UyW6YScGHPYoUokXsRQmWXXjzl0mDyq5F73Dby54FIpIdhUHa/aJCqaPzL0eV\n         RsGPV25mB5BFUCRRfK8iXlRGU09mT0TzBLahrcIW9yX5jWR3XtfBCOkcmgEhuBK2gIB2\n         Jz60MlFDDTGDkA/L+POWnUVZ8XluCoGYHDpzmzgg8FqksWQoP9tMeT7Bnfohz+qiOYzO\n         vT4w==",
+  "to": [
+    [
+      "",
+      "spacebar.post@gmail.com"
+    ]
+  ],
+  "x-sending-engine": "Hedwig PCS",
+  "message-id": "<577856470.1739199.1747745837001@cell-5-7c479768c-6skv9>",
+  "x-virtual-mta": "s1.csa2.acemsb4.com",
+  "to_domains": [
+    "gmail.com"
+  ],
+  "from": [
+    [
+      "Yoast",
+      "newsletter@yoast.com"
+    ]
+  ],
+  "date": "2025-05-20T12:57:17+00:00",
+  "x-received": "by 2002:a05:6214:e85:b0:6ed:15ce:e33e with SMTP id 6a1803df08f44-6f8b082e9a0mr290752266d6.27.1747746410195;\n        Tue, 20 May 2025 06:06:50 -0700 (PDT)",
+  "x-report-abuse": "Please report abuse to abuse@activecampaign.com",
+  "has_defects": false
+}
