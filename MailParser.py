@@ -1,5 +1,6 @@
 import json
 from datetime import datetime
+from elasticsearch import Elasticsearch
 from lxml import html
 import regex as re
 import mailparser
@@ -12,17 +13,21 @@ import ipaddress
 import base64
 import hashlib
 
-# MailDict = lambda:{
-#     "subject": "",
-#     "sender_email": "",
-#     "sender_smtp_ip": "",
-#     "sender_name": "",
-#     "recipient_email": "",
-#     "recipient_smtp_ip": "",
-#     "recipient_name": "",
-#     "attachment_names": set(),
-#     "links": set()
-# }
+env_vars = load_dotenv('mailparser_config.env')
+
+# Initiate an ElasticSearch Client session.
+
+try:
+    client = Elasticsearch(
+        os.environ['elastic_console_url'],
+        api_key=os.environ['elastic_api_key']
+    )
+except Exception:
+    print('error initiating Elastic Client, exits')
+    exit(1)
+
+
+# Parsed Email data object.
 @dataclass
 class ParseObject:
     subject: str = ""
@@ -37,6 +42,87 @@ class ParseObject:
     domains: set = field(default_factory=set)
 
 
+# ParseObject = lambda:{
+#     "subject": "",
+#     "sender_email": "",
+#     "sender_smtp_ip": "",
+#     "sender_name": "",
+#     "recipient_email": "",
+#     "recipient_smtp_ip": "",
+#     "recipient_name": "",
+#     "attachment_names": set(),
+#     "links": set()
+# }
+
+
+# ElasticSearch field mapping of the parsed object that we will inject to the email_index
+email_field_mapping = {
+    "mappings": {
+        "properties": {
+            "subject": {
+                "type": "text"
+            },
+            "message_id": {
+                "type": "keyword"
+            },
+            "sender_email": {
+                "type": "keyword"
+            },
+            "sender_ip": {
+                "type": "ip"
+            },
+            "sender_name": {
+                "type": "text"
+            },
+            "recipients_emails": {
+                "type": "keyword"
+            },
+            "recipient_ip": {
+                "type": "keyword"
+            },
+            "attachments": {
+                "type": "nested",
+                "properties": {
+                    "file_name": {
+                        "type": "keyword"
+                    },
+                    "file_size": {
+                        "type": "long"
+                    },
+                    "hashs": {
+                        "properties": {
+                            "md5": {
+                                "type": "keyword"
+                            },
+                            "sha1": {
+                                "type": "keyword"
+                            },
+                            "sha256": {
+                                "type": "keyword"
+                            }
+                        }
+                    }
+                }
+            },
+            "links": {
+                "type": "keyword"
+            },
+            "domains": {
+                "type": "keyword"
+            }
+        }
+    }
+}
+
+if os.environ["setup_mapping"].lower() == "true":
+    try:
+        set_mapping = client.indices.put_mapping(index=os.environ["email_index"], body=email_field_mapping)
+    except Exception as e:
+        print(f'an error occured while setting elasticsearch event mapping\n\nerror: {e}')
+
+email_file_mapping = defaultdict(ParseObject)
+extraction_array = []
+
 ipv4_or_ipv6_regex = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b|'
                                 r'\b(?:'
                                 r'(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}|'
@@ -48,7 +134,7 @@ ipv4_or_ipv6_regex = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b|'
                                 r'(?:[A-Fa-f0-9]{1,4}:){1,2}(?::[A-Fa-f0-9]{1,4}){1,5}|'
                                 r'[A-Fa-f0-9]{1,4}:(?:(?::[A-Fa-f0-9]{1,4}){1,6})|'
                                 r':(?:(?::[A-Fa-f0-9]{1,4}){1,7}|:)'
-                                r')\b'
+                                r')(?=[^\w:]|$)'
                                 )
 # ipv4_or_ipv6_regex = re.compile(r'(\b25[0-5]|\b2[0-4][0-9]|\b[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}')
 extract_client_ip_regex = re.compile(r'client-ip=(.*)?;')
@@ -63,11 +149,8 @@ def type_handler(obj):
         return list(obj)
 
 
-env_vars = load_dotenv('mailparser_config.env')
-email_file_mapping = defaultdict(ParseObject)
-
 try:
-    _eml_folder_path = os.environ["eml_folder"]
+    _eml_folder_path = os.environ["email_files_folder"]
     # _msg_folder_path = os.environ["msg_folder"]
 except KeyError as wrong_key:
     print(
@@ -148,6 +231,7 @@ for email, value in email_file_mapping.items():
     if len(parsed.attachments) != 0:
         for attachment in parsed.attachments:
             match attachment["content_transfer_encoding"]:
+                # TO-DO: Find out if other decoders are needed, if so- add them to the cases.
                 case "base64":
                     payload_as_bytes = base64.b64decode(attachment["payload"])
                 case _:
@@ -162,9 +246,7 @@ for email, value in email_file_mapping.items():
                 }
             })
 
-    #
-    # output = json.dumps(asdict(value), default=type_handler, indent=4)
-    # print(output)
+    output = json.dumps(asdict(value), default=type_handler)
+    extraction_array.append(output)
 
-
-# print(email_file_mapping)
+print(extraction_array)
