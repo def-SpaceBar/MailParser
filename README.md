@@ -55,7 +55,7 @@ Parsed Email Example:
             }
         }
     ],
-    "links": [],
-    "domains": []
+    "links": [], # Will remain empty unless <a> tags exists in the email body. --> unique links
+    "domains": [] # unique domains from the links array
 }
 ```
